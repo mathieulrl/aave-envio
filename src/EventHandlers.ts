@@ -3,22 +3,10 @@
  */
 import {
   ATokenInstance,
-  ATokenInstance_Approval,
   ATokenInstance_Burn,
   ATokenInstance_Mint,
   ATokenInstance_Transfer,
 } from "generated";
-
-ATokenInstance.Approval.handler(async ({ event, context }) => {
-  const entity: ATokenInstance_Approval = {
-    id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-    owner: event.params.owner,
-    spender: event.params.spender,
-    value: event.params.value,
-  };
-
-  context.ATokenInstance_Approval.set(entity);
-});
 
 ATokenInstance.Burn.handler(async ({ event, context }) => {
   const entity: ATokenInstance_Burn = {

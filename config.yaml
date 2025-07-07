@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./node_modules/envio/evm.schema.json
+name: aave-envio
+networks:
+- id: 42161
+  start_block: 0
+  contracts:
+  - name: ATokenInstance
+    address:
+    - 0x1865Dfd7e94233BC3807ACE5fFE6BcF2a66A0C83
+    handler: src/EventHandlers.ts
+    events:
+    - event: Approval(address indexed owner, address indexed spender, uint256 value)
+    - event: Burn(address indexed from, address indexed target, uint256 value, uint256 balanceIncrease, uint256 index)
+    - event: Mint(address indexed caller, address indexed onBehalfOf, uint256 value, uint256 balanceIncrease, uint256 index)
+    - event: Transfer(address indexed from, address indexed to, uint256 value)
+unordered_multichain_mode: true

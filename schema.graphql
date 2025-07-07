@@ -1,0 +1,32 @@
+type ATokenInstance_Approval {
+  id: ID!
+  owner: String!
+  spender: String!
+  value: BigInt!
+}
+
+type ATokenInstance_Burn {
+  id: ID!
+  from: String!
+  target: String!
+  value: BigInt!
+  balanceIncrease: BigInt!
+  index: BigInt!
+}
+
+type ATokenInstance_Mint {
+  id: ID!
+  caller: String!
+  onBehalfOf: String!
+  value: BigInt!
+  balanceIncrease: BigInt!
+  index: BigInt!
+}
+
+type ATokenInstance_Transfer {
+  id: ID!
+  from: String!
+  to: String!
+  value: BigInt!
+}
+

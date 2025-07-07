@@ -6,7 +6,7 @@ networks:
   contracts:
   - name: ATokenInstance
     address:
-    - 0x2d23EeFC273AabfdE4013cD80132E9FC16863069
+    - 0xc6B7AcA6DE8a6044E0e32d0c841a89244A10D284
     handler: src/EventHandlers.ts
     events:
     - event: Burn(address indexed from, address indexed target, uint256 value, uint256 balanceIncrease, uint256 index)

@@ -18,7 +18,7 @@ networks:
   contracts:
   - name: FiatTokenV2_2
     address:
-    - 0x235AE97b28466Db30469b89A9fe4cFf0659f82Cb
+    - 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359
     handler: src/EventHandlers.ts
     events:
     - event: Burn(address indexed burner, uint256 amount)

@@ -1,4 +1,24 @@
-type ATokenInstance_Burn {
+type PolygonUSDC_Burn {
+  id: ID!
+  burner: String!
+  amount: BigInt!
+}
+
+type PolygonUSDC_Mint {
+  id: ID!
+  minter: String!
+  to: String!
+  amount: BigInt!
+}
+
+type PolygonUSDC_Transfer {
+  id: ID!
+  from: String!
+  to: String!
+  value: BigInt!
+}
+
+type AGnoEURe_Burn {
   id: ID!
   from: String!
   target: String!
@@ -7,7 +27,7 @@ type ATokenInstance_Burn {
   index: BigInt!
 }
 
-type ATokenInstance_Mint {
+type AGnoEURe_Mint {
   id: ID!
   caller: String!
   onBehalfOf: String!
@@ -16,27 +36,32 @@ type ATokenInstance_Mint {
   index: BigInt!
 }
 
-type ATokenInstance_Transfer {
+type AGnoEURe_Transfer {
   id: ID!
   from: String!
   to: String!
   value: BigInt!
 }
 
-type FiatTokenV2_2_Burn {
+type AGnoUSDC_Burn {
   id: ID!
-  burner: String!
-  amount: BigInt!
+  from: String!
+  target: String!
+  value: BigInt!
+  balanceIncrease: BigInt!
+  index: BigInt!
 }
 
-type FiatTokenV2_2_Mint {
+type AGnoUSDC_Mint {
   id: ID!
-  minter: String!
-  to: String!
-  amount: BigInt!
+  caller: String!
+  onBehalfOf: String!
+  value: BigInt!
+  balanceIncrease: BigInt!
+  index: BigInt!
 }
 
-type FiatTokenV2_2_Transfer {
+type AGnoUSDC_Transfer {
   id: ID!
   from: String!
   to: String!

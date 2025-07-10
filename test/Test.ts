@@ -1,39 +1,36 @@
 import assert from "assert";
 import { 
   TestHelpers,
-  ATokenInstance_Burn
+  PolygonUSDC_Burn
 } from "generated";
-const { MockDb, ATokenInstance } = TestHelpers;
+const { MockDb, PolygonUSDC } = TestHelpers;
 
-describe("ATokenInstance contract Burn event tests", () => {
+describe("PolygonUSDC contract Burn event tests", () => {
   // Create mock db
   const mockDb = MockDb.createMockDb();
 
-  // Creating mock for ATokenInstance contract Burn event
-  const event = ATokenInstance.Burn.createMockEvent({/* It mocks event fields with default values. You can overwrite them if you need */});
+  // Creating mock for PolygonUSDC contract Burn event
+  const event = PolygonUSDC.Burn.createMockEvent({/* It mocks event fields with default values. You can overwrite them if you need */});
 
-  it("ATokenInstance_Burn is created correctly", async () => {
+  it("PolygonUSDC_Burn is created correctly", async () => {
     // Processing the event
-    const mockDbUpdated = await ATokenInstance.Burn.processEvent({
+    const mockDbUpdated = await PolygonUSDC.Burn.processEvent({
       event,
       mockDb,
     });
 
     // Getting the actual entity from the mock database
-    let actualATokenInstanceBurn = mockDbUpdated.entities.ATokenInstance_Burn.get(
+    let actualPolygonUSDCBurn = mockDbUpdated.entities.PolygonUSDC_Burn.get(
       `${event.chainId}_${event.block.number}_${event.logIndex}`
     );
 
     // Creating the expected entity
-    const expectedATokenInstanceBurn: ATokenInstance_Burn = {
+    const expectedPolygonUSDCBurn: PolygonUSDC_Burn = {
       id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-      from: event.params.from,
-      target: event.params.target,
-      value: event.params.value,
-      balanceIncrease: event.params.balanceIncrease,
-      index: event.params.index,
+      burner: event.params.burner,
+      amount: event.params.amount,
     };
     // Asserting that the entity in the mock database is the same as the expected entity
-    assert.deepEqual(actualATokenInstanceBurn, expectedATokenInstanceBurn, "Actual ATokenInstanceBurn should be the same as the expectedATokenInstanceBurn");
+    assert.deepEqual(actualPolygonUSDCBurn, expectedPolygonUSDCBurn, "Actual PolygonUSDCBurn should be the same as the expectedPolygonUSDCBurn");
   });
 });

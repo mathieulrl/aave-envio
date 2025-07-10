@@ -32,4 +32,3 @@ networks:
     - event: Mint(address indexed minter, address indexed to, uint256 amount)
     - event: Transfer(address indexed from, address indexed to, uint256 value)
 unordered_multichain_mode: true
-

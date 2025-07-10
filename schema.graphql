@@ -23,3 +23,23 @@ type ATokenInstance_Transfer {
   value: BigInt!
 }
 
+type FiatTokenV2_2_Burn {
+  id: ID!
+  burner: String!
+  amount: BigInt!
+}
+
+type FiatTokenV2_2_Mint {
+  id: ID!
+  minter: String!
+  to: String!
+  amount: BigInt!
+}
+
+type FiatTokenV2_2_Transfer {
+  id: ID!
+  from: String!
+  to: String!
+  value: BigInt!
+}
+

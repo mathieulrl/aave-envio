@@ -1,36 +1,39 @@
 import assert from "assert";
 import { 
   TestHelpers,
-  PolygonUSDC_Burn
+  AGnoEURe_Burn
 } from "generated";
-const { MockDb, PolygonUSDC } = TestHelpers;
+const { MockDb, AGnoEURe } = TestHelpers;
 
-describe("PolygonUSDC contract Burn event tests", () => {
+describe("AGnoEURe contract Burn event tests", () => {
   // Create mock db
   const mockDb = MockDb.createMockDb();
 
-  // Creating mock for PolygonUSDC contract Burn event
-  const event = PolygonUSDC.Burn.createMockEvent({/* It mocks event fields with default values. You can overwrite them if you need */});
+  // Creating mock for AGnoEURe contract Burn event
+  const event = AGnoEURe.Burn.createMockEvent({/* It mocks event fields with default values. You can overwrite them if you need */});
 
-  it("PolygonUSDC_Burn is created correctly", async () => {
+  it("AGnoEURe_Burn is created correctly", async () => {
     // Processing the event
-    const mockDbUpdated = await PolygonUSDC.Burn.processEvent({
+    const mockDbUpdated = await AGnoEURe.Burn.processEvent({
       event,
       mockDb,
     });
 
     // Getting the actual entity from the mock database
-    let actualPolygonUSDCBurn = mockDbUpdated.entities.PolygonUSDC_Burn.get(
+    let actualAGnoEUReBurn = mockDbUpdated.entities.AGnoEURe_Burn.get(
       `${event.chainId}_${event.block.number}_${event.logIndex}`
     );
 
     // Creating the expected entity
-    const expectedPolygonUSDCBurn: PolygonUSDC_Burn = {
+    const expectedAGnoEUReBurn: AGnoEURe_Burn = {
       id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-      burner: event.params.burner,
-      amount: event.params.amount,
+      from: event.params.from,
+      target: event.params.target,
+      value: event.params.value,
+      balanceIncrease: event.params.balanceIncrease,
+      index: event.params.index,
     };
     // Asserting that the entity in the mock database is the same as the expected entity
-    assert.deepEqual(actualPolygonUSDCBurn, expectedPolygonUSDCBurn, "Actual PolygonUSDCBurn should be the same as the expectedPolygonUSDCBurn");
+    assert.deepEqual(actualAGnoEUReBurn, expectedAGnoEUReBurn, "Actual AGnoEUReBurn should be the same as the expectedAGnoEUReBurn");
   });
 });

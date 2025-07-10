@@ -1,70 +1,11 @@
-type PolygonUSDC_Burn {
+type Position {
   id: ID!
-  burner: String!
-  amount: BigInt!
-}
-
-type PolygonUSDC_Mint {
-  id: ID!
-  minter: String!
-  to: String!
-  amount: BigInt!
-}
-
-type PolygonUSDC_Transfer {
-  id: ID!
-  from: String!
-  to: String!
-  value: BigInt!
-}
-
-type AGnoEURe_Burn {
-  id: ID!
-  from: String!
-  target: String!
-  value: BigInt!
-  balanceIncrease: BigInt!
-  index: BigInt!
-}
-
-type AGnoEURe_Mint {
-  id: ID!
-  caller: String!
-  onBehalfOf: String!
-  value: BigInt!
-  balanceIncrease: BigInt!
-  index: BigInt!
-}
-
-type AGnoEURe_Transfer {
-  id: ID!
-  from: String!
-  to: String!
-  value: BigInt!
-}
-
-type AGnoUSDC_Burn {
-  id: ID!
-  from: String!
-  target: String!
-  value: BigInt!
-  balanceIncrease: BigInt!
-  index: BigInt!
-}
-
-type AGnoUSDC_Mint {
-  id: ID!
-  caller: String!
-  onBehalfOf: String!
-  value: BigInt!
-  balanceIncrease: BigInt!
-  index: BigInt!
-}
-
-type AGnoUSDC_Transfer {
-  id: ID!
-  from: String!
-  to: String!
-  value: BigInt!
+  chainId: Int!
+  token: String! # always aEURe for now
+  walletAddress: String!
+  depositedBalance: BigInt!
+  lastBalance: BigInt!
+  createdAt: String!
+  updatedAt: String!
 }
 

@@ -4,9 +4,16 @@ networks:
 - id: 100
   start_block: 0
   contracts:
-  - name: ATokenInstance
+  - name: aGnoEURe
     address:
     - 0xEdBC7449a9b594CA4E053D9737EC5Dc4CbCcBfb2
+    handler: src/EventHandlers.ts
+    events:
+    - event: Burn(address indexed from, address indexed target, uint256 value, uint256 balanceIncrease, uint256 index)
+    - event: Mint(address indexed caller, address indexed onBehalfOf, uint256 value, uint256 balanceIncrease, uint256 index)
+    - event: Transfer(address indexed from, address indexed to, uint256 value)
+  - name: aGnoUSDC
+    address:
     - 0xc6B7AcA6DE8a6044E0e32d0c841a89244A10D284
     handler: src/EventHandlers.ts
     events:
@@ -16,7 +23,7 @@ networks:
 - id: 137
   start_block: 0
   contracts:
-  - name: FiatTokenV2_2
+  - name: PolygonUSDC
     address:
     - 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359
     handler: src/EventHandlers.ts

@@ -9,3 +9,23 @@ type Position {
   updatedAt: String!
 }
 
+type PositionPerformance {
+  id: ID!                # ex: "2024-07-10:0x1234...:day"
+  walletAddress: String!
+  period: String!        # "day", "week", "month"
+  periodStart: String!   # ex: "2024-07-10"
+  earned: BigInt!        # total earned in this period
+  createdAt: String!
+  updatedAt: String!
+}
+
+type PositionSnapshot {
+  id: ID!                # ex: "2024-07-11:0x1234..."
+  positionId: String!
+  walletAddress: String!
+  date: String!          # "YYYY-MM-DD"
+  depositedBalance: BigInt!
+  lastBalance: BigInt!
+  earnedWithdrawn: BigInt!
+  createdAt: String!
+}

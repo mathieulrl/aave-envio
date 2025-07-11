@@ -173,6 +173,15 @@ AGnoEURe.Mint.handler(async ({ event, context }) => {
 
 // Handle transfers: update both sender and receiver positions
 AGnoEURe.Transfer.handler(async ({ event, context }) => {
+  // Guard: skip if this transfer is part of a Mint (from zero address) or Burn (to zero address)
+  if (
+    event.params.from === "0x0000000000000000000000000000000000000000" ||
+    event.params.to === "0x0000000000000000000000000000000000000000"
+  ) {
+    // This is a Mint or Burn, do not process as a transfer
+    return;
+  }
+
   const now = event.block.timestamp.toString();
   const amount = event.params.value;
 

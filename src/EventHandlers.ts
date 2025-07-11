@@ -2,6 +2,30 @@
  * Please refer to https://docs.envio.dev for a thorough guide on all Envio indexer features
  */
 import { AGnoEURe } from "generated";
+import { Address, createPublicClient, http, parseAbi } from 'viem';
+import { gnosis } from "viem/chains"
+
+const infuraId = process.env.INFURA_API_KEY
+
+const client = createPublicClient({
+  chain: gnosis,
+  transport: http(`https://gnosis-mainnet.infura.io/v3/${infuraId}`) 
+});
+
+const AEURE_ADDRESS = '0xEdBC7449a9b594CA4E053D9737EC5Dc4CbCcBfb2';
+const AEURE_ABI = parseAbi([
+  'function balanceOf(address) view returns (uint256)'
+]);
+
+async function fetchOnChainBalance(wallet: Address, blockNumber: bigint) {
+  return await client.readContract({
+    address: AEURE_ADDRESS,
+    abi: AEURE_ABI,
+    functionName: 'balanceOf',
+    args: [wallet],
+    blockNumber
+  }) as bigint;
+}
 
 // --- Helper functions ---
 
@@ -55,7 +79,9 @@ async function updatePerformance(
   }
 }
 
-function applyWithdrawal(position: any, amount: bigint, now: string) {
+async function applyWithdrawal(position: any, amount: bigint, now: string, blockNumber: bigint) {
+  // Fetch real on-chain balance at the event's block
+  const actualBalance = await fetchOnChainBalance(position.walletAddress, blockNumber);
   // Proportional principal withdrawal logic (to dissociate principal investment from earnings)
   const lastBalanceBefore = position.lastBalance;
   let principalWithdrawn = BigInt(0);
@@ -66,21 +92,22 @@ function applyWithdrawal(position: any, amount: bigint, now: string) {
     }
   }
   const newDepositedBalance = position.depositedBalance - principalWithdrawn;
-  const newLastBalance = lastBalanceBefore - amount;
   return {
     ...position,
     depositedBalance: newDepositedBalance < BigInt(0) ? BigInt(0) : newDepositedBalance,
-    lastBalance: newLastBalance < BigInt(0) ? BigInt(0) : newLastBalance,
+    lastBalance: actualBalance,
     updatedAt: now,
   };
 }
 
-function applyDeposit(position: any, amount: bigint, now: string) {
+async function applyDeposit(position: any, amount: bigint, now: string, blockNumber: bigint) {
+  // Fetch real on-chain balance at the event's block
+  const actualBalance = await fetchOnChainBalance(position.walletAddress, blockNumber);
   const newDepositedBalance = position.depositedBalance + amount;
   return {
     ...position,
     depositedBalance: newDepositedBalance,
-    lastBalance: position.lastBalance + amount,
+    lastBalance: actualBalance,
     updatedAt: now,
   };
 }
@@ -137,7 +164,8 @@ AGnoEURe.Burn.handler(async ({ event, context }) => {
     };
   }
   const prevEarnings = BigInt(position.lastBalance) - BigInt(position.depositedBalance);
-  const updatedPosition = applyWithdrawal(position, event.params.value, now);
+  const blockNumber = BigInt(event.block.number);
+  const updatedPosition = await applyWithdrawal(position, event.params.value, now, blockNumber);
   context.Position.set(updatedPosition);
   const earnings = BigInt(updatedPosition.lastBalance) - BigInt(updatedPosition.depositedBalance);
   const earningsDelta = earnings - prevEarnings;
@@ -163,7 +191,8 @@ AGnoEURe.Mint.handler(async ({ event, context }) => {
     };
   }
   const prevEarnings = BigInt(position.lastBalance) - BigInt(position.depositedBalance);
-  const updatedPosition = applyDeposit(position, event.params.value, now);
+  const blockNumber = BigInt(event.block.number);
+  const updatedPosition = await applyDeposit(position, event.params.value, now, blockNumber);
   context.Position.set(updatedPosition);
   const earnings = BigInt(updatedPosition.lastBalance) - BigInt(updatedPosition.depositedBalance);
   const earningsDelta = earnings - prevEarnings;
@@ -181,9 +210,9 @@ AGnoEURe.Transfer.handler(async ({ event, context }) => {
     // This is a Mint or Burn, do not process as a transfer
     return;
   }
-
   const now = event.block.timestamp.toString();
   const amount = event.params.value;
+  const blockNumber = BigInt(event.block.number);
 
   // --- Sender: decrease balances proportionally (like Burn) ---
   const senderId = event.params.from;
@@ -201,7 +230,7 @@ AGnoEURe.Transfer.handler(async ({ event, context }) => {
     };
   }
   const senderPrevEarnings = BigInt(sender.lastBalance) - BigInt(sender.depositedBalance);
-  const updatedSender = applyWithdrawal(sender, amount, now);
+  const updatedSender = await applyWithdrawal(sender, amount, now, blockNumber);
   context.Position.set(updatedSender);
   const senderEarnings = BigInt(updatedSender.lastBalance) - BigInt(updatedSender.depositedBalance);
   const senderEarningsDelta = senderEarnings - senderPrevEarnings;
@@ -228,8 +257,8 @@ AGnoEURe.Transfer.handler(async ({ event, context }) => {
   // For receiver, only lastBalance increases (not a deposit)
   const updatedReceiver = {
     ...receiver,
-    lastBalance: receiver.lastBalance + amount,
-    // depositedBalance unchanged // TODO : increment deposit
+    lastBalance: await fetchOnChainBalance( receiverId as Address, blockNumber),
+     // depositedBalance unchanged // TODO : increment deposit
     updatedAt: now,
   };
   context.Position.set(updatedReceiver);
@@ -238,7 +267,6 @@ AGnoEURe.Transfer.handler(async ({ event, context }) => {
   await updatePerformance(receiverId, receiverEarningsDelta, event.block.timestamp, context);
   await updateDailySnapshot(updatedReceiver, 0n, event.block.timestamp, context);
 });
-
 //query walletAddress not positionId
 //look positionPerformance performancePeriod
 
@@ -260,3 +288,58 @@ AGnoEURe.Transfer.handler(async ({ event, context }) => {
 // daily journée hier
 // weekly 7 derniers jours glissant
 // monthly 30 derniers jours
+
+
+
+
+// query {
+//   PositionSnapshot(
+//     where: {
+//       walletAddress: { _eq: "0x5fe43A5e98235EA9a80749190E02CF6A9e99Fd2E" }
+//       date: { _gte: "2025-07-10" }
+//     }
+//     order_by: { date: asc }
+//   ) {
+//       id
+//       positionId
+//       walletAddress
+//       date
+//       depositedBalance
+//       lastBalance
+//       earnedWithdrawn
+//      createdAt
+//   }
+// }
+
+
+//   query {
+//     Position_by_pk(id: "0x5fe43A5e98235EA9a80749190E02CF6A9e99Fd2E") {
+//       id
+//       walletAddress
+//       chainId
+//       token
+//       depositedBalance
+//       lastBalance
+//       createdAt
+//       updatedAt
+//       db_write_timestamp
+//     }
+//   }
+
+
+
+// 431573220849228825
+// 863146441698457648
+// 99999962846390070
+
+
+// PositionPerformance(
+//   where: { walletAddress: { _eq: $wallet }, period: { _eq: $period } }
+//   order_by: { periodStart: desc }
+// ) {
+//   period
+//   periodStart
+//   earned
+//   createdAt
+//   updatedAt
+// }

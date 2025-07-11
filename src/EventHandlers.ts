@@ -5,11 +5,9 @@ import { AGnoEURe } from "generated";
 import { Address, createPublicClient, http, parseAbi } from 'viem';
 import { gnosis } from "viem/chains"
 
-const infuraId = process.env.INFURA_API_KEY
-
 const client = createPublicClient({
   chain: gnosis,
-  transport: http(`https://gnosis-mainnet.infura.io/v3/${infuraId}`) 
+  transport: http(`https://gnosis-mainnet.infura.io/v3/0ac3659c789149a49ab7b5c69d42dcb7`) 
 });
 
 const AEURE_ADDRESS = '0xEdBC7449a9b594CA4E053D9737EC5Dc4CbCcBfb2';

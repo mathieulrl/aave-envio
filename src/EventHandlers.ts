@@ -7,7 +7,7 @@ import { gnosis } from "viem/chains"
 
 const client = createPublicClient({
   chain: gnosis,
-  transport: http(`https://gnosis-mainnet.infura.io/v3/0ac3659c789149a49ab7b5c69d42dcb7`) 
+  transport: http(`https://gnosis-mainnet.g.alchemy.com/v2/1fqSceu8e-9NRkK2zZmmkXWt02D0ChPX`) 
 });
 
 const AEURE_ADDRESS = '0xEdBC7449a9b594CA4E053D9737EC5Dc4CbCcBfb2';
